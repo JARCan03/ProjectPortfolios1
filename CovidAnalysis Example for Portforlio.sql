@@ -1,3 +1,9 @@
+
+
+CREATE DATABASE COVIDCASES
+	
+        ---Insert Covid Dataset from ourworldindata either through import and export SQL app
+	
 	--Select *
 	-- From dbo.CovidVaccinations$
 	-- order by 3, 4
