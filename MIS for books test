@@ -1,0 +1,71 @@
+library(shiny)
+library(dplyr)
+
+#DATASET
+books_data <- data.frame(
+  Title = c("Book1", "Book2", "Book3"),
+  Author = c("Author1", "Author2", "Author3"),
+  Copies = c(10, 15, 20)
+)
+
+#UI DEFINITION
+ui <- fluidPage(
+  titlePanel("Library Management Information System"),
+  
+  sidebarLayout(
+    sidebarPanel(
+      textInput("title", "Book Title"),
+      textInput("author", "Author"),
+      numericInput("copies", "Number of Copies", 1, min = 1),
+      actionButton("addButton", "Add Book")
+    ),
+    
+    mainPanel(
+      tableOutput("booksTable"),
+      br(),
+      textInput("searchInput", "Search by Title or Author"),
+      actionButton("searchButton", "Search"),
+      br(),
+      verbatimTextOutput("searchResult")
+    )
+  )
+)
+
+#SERVER LOGIC
+server <- function(input, output) {
+  #Reactive values for storing the library data
+  library_data <- reactiveVal(books_data)
+  
+  #Add book to the library
+  observeEvent(input$addButton, {
+    new_book <- data.frame(
+      Title = input$title,
+      Author = input$author,
+      Copies = input$copies
+    )
+    library_data(rbind(library_data(), new_book))
+  })
+  
+  #Display the library data in a table
+  output$booksTable <- renderTable({
+    library_data()
+  })
+  
+  #Search for books
+  observeEvent(input$searchButton, {
+    search_term <- input$searchInput
+    result <- library_data() %>%
+      filter(str_detect(Title, search_term) | str_detect(Author, search_term))
+    
+    output$searchResult <- renderPrint({
+      if (nrow(result) > 0) {
+        result
+      } else {
+        "No matching books found."
+      }
+    })
+  })
+
+
+# Run the application
+shinyApp(ui, server)
