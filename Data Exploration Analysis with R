@@ -1,0 +1,23 @@
+library(tidyverse)
+
+data(diamonds)
+
+summary(diamonds)
+
+#Explaratory Analysis with diamonds dataset
+
+ggplot(data=diamonds, aes(x=price)) +
+  geom_histogram(fill="steelblue", color="black") +
+    ggtitle("Histogram of Price Values")
+
+
+ggplot(data=diamonds, aes(x=carat, y=price, color=cut)) +
+  geom_point() +
+  ggtitle("Scatterplot of Carat per Price")
+
+ggplot(data=diamonds, aes(x=cut, y =price)) +
+  geom_boxplot(fill="green")
+
+round(cor(diamonds[c('carat', 'depth', 'table', 'price', 'x', 'y', 'z')]), 2)
+
+sapply(diamonds, function(x) sum(is.na(x)))
